@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Controller\MeController;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use ApiPlatform\Core\Action\NotFoundAction;
@@ -37,6 +39,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string")
      */
     private $password;
+
+    /**
+     * @ORM\OneToMany(targetEntity=TableHasPlayers::class, mappedBy="player", orphanRemoval=true)
+     */
+    private $tableHasPlayers;
+
+    /**
+     * @ORM\OneToMany(targetEntity=GameCharacters::class, mappedBy="player")
+     */
+    private $gameCharacters;
+
+    public function __construct()
+    {
+        $this->tableHasPlayers = new ArrayCollection();
+        $this->gameCharacters = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -125,5 +143,65 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection|TableHasPlayers[]
+     */
+    public function getTableHasPlayers(): Collection
+    {
+        return $this->tableHasPlayers;
+    }
+
+    public function addTableHasPlayer(TableHasPlayers $tableHasPlayer): self
+    {
+        if (!$this->tableHasPlayers->contains($tableHasPlayer)) {
+            $this->tableHasPlayers[] = $tableHasPlayer;
+            $tableHasPlayer->setPlayer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTableHasPlayer(TableHasPlayers $tableHasPlayer): self
+    {
+        if ($this->tableHasPlayers->removeElement($tableHasPlayer)) {
+            // set the owning side to null (unless already changed)
+            if ($tableHasPlayer->getPlayer() === $this) {
+                $tableHasPlayer->setPlayer(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|GameCharacters[]
+     */
+    public function getGameCharacters(): Collection
+    {
+        return $this->gameCharacters;
+    }
+
+    public function addGameCharacter(GameCharacters $gameCharacter): self
+    {
+        if (!$this->gameCharacters->contains($gameCharacter)) {
+            $this->gameCharacters[] = $gameCharacter;
+            $gameCharacter->setPlayer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGameCharacter(GameCharacters $gameCharacter): self
+    {
+        if ($this->gameCharacters->removeElement($gameCharacter)) {
+            // set the owning side to null (unless already changed)
+            if ($gameCharacter->getPlayer() === $this) {
+                $gameCharacter->setPlayer(null);
+            }
+        }
+
+        return $this;
     }
 }
