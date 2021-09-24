@@ -2,8 +2,9 @@
 
 namespace App\Entity;
 
-use App\Repository\TableHasPlayersRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\TableHasPlayersRepository;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=TableHasPlayersRepository::class)
@@ -20,6 +21,7 @@ class TableHasPlayers
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="tableHasPlayers")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"table:read"})
      */
     private $player;
 

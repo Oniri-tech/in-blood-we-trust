@@ -2,14 +2,15 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\GameTablesRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\GameTablesRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
+ * @ApiResource(normalizationContext = {"groups" = {"table:read"}})
  * @ORM\Entity(repositoryClass=GameTablesRepository::class)
  */
 class GameTables
@@ -18,21 +19,25 @@ class GameTables
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"table:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"table:read"})
      */
     private $name;
 
     /**
      * @ORM\OneToMany(targetEntity=TableHasPlayers::class, mappedBy="game_table", orphanRemoval=true)
+     * @Groups({"table:read"})
      */
     private $tableHasPlayers;
 
     /**
      * @ORM\Column(type="datetime_immutable")
+     * @Groups({"table:read"})
      */
     private $created_at;
 
